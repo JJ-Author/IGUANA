@@ -7,6 +7,7 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -241,7 +242,8 @@ public class QueryHandlerImpl implements QueryHandler{
 		int index = 0;
 		while ((line = br.readLine()) != null) {
 			String[] add = new String[2];
-			add[0] = line.replaceAll(" +", " ");
+			line =  (f.getName().matches(".*-urlenc\\.[^.$]{2,5}$")) ? URLDecoder.decode(line, "UTF-8") : line;
+			add[0] = line.replaceAll(" +", " "); //why?
 			add[1] = index + "";
 			index++;
 			feasibleList.add(add);
