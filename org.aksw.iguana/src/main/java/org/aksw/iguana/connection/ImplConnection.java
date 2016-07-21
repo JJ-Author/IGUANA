@@ -451,14 +451,17 @@ public class ImplConnection implements Connection {
 	        	}
 	        	catch (QueryException e){ // if sparql query is not 100% sparql compliant (e.g. blazegraph or virtuoso queries) use 'direct mode' of jena
 	        		qexec = new QueryEngineHTTP(getEndpoint(), query);
-	        		//try to detect query type manually // TODO improve recognition
-	                if (query.matches(".*(?mi)^[^#]*Select\\s.*")|| query.matches(".*(?mi)^\\s*Select\\s.*"))
+	        		//try to detect query type manually // TODO improve recognition 
+	        		String query_tmp = query 	.replaceAll("(?m)<[^<>]*>", "") 			// remove all relative and all IRI's (could contain # (without being a comment) or Select)
+	        									.replaceAll("\"([^\"]|(?<=\\\\)\")*\"", "")	// remove all Literals with qoutes " (could contain # (without being a comment) or Select)
+	        									.replaceAll("'([^']|(?<=\\\\)')*'", "")	;	// remove all Literals with qoutes '
+	                if (query_tmp.matches(".*(?mi)^[^#]* Select\\s.*")|| query_tmp.matches(".*(?mi)^\\s*Select\\s.*")) 
 	                	queryType = Query.QueryTypeSelect;
-	                else if (query.matches(".*(?mi)^[^#]*Ask\\s.*")|| query.matches(".*(?mi)^\\s*Ask\\s.*"))
+	                else if (query_tmp.matches(".*(?mi)^[^#]* Ask\\s.*")|| query_tmp.matches(".*(?mi)^\\s*Ask\\s.*"))
 	            		queryType = Query.QueryTypeAsk;
-	                else if (query.matches(".*(?mi)^[^#]*Construct\\s.*")|| query.matches(".*(?mi)^\\s*Construct\\s.*"))
+	                else if (query_tmp.matches(".*(?mi)^[^#]* Construct\\s.*")|| query_tmp.matches(".*(?mi)^\\s*Construct\\s.*"))
 	                	queryType = Query.QueryTypeConstruct;
-	                else if (query.matches(".*(?mi)^[^#]*Describe\\s.*")|| query.matches(".*(?mi)^\\s*Describe\\s.*"))
+	                else if (query_tmp.matches(".*(?mi)^[^#]* Describe\\s.*")|| query_tmp.matches(".*(?mi)^\\s*Describe\\s.*"))
 	                	queryType = Query.QueryTypeDescribe;
 	        	}
 //				qexec.setTimeout(5000, 5000);
@@ -471,26 +474,30 @@ public class ImplConnection implements Connection {
 //				stm.setQueryTimeout(queryTimeout); 
 //				ResultSet rs=null;
 	            Calendar start = Calendar.getInstance();
-	           
+	            Calendar end = null;
 	            try {
 	            switch(queryType){
 	            case Query.QueryTypeAsk:
 	                qexec.execAsk();
+	                end = Calendar.getInstance();
 	                break;
 	            case Query.QueryTypeConstruct:
 	                Model m = qexec.execConstruct();
+	                end = Calendar.getInstance();
 	                m.removeAll();
 	                m.close();
 	                m=null;
 	                break;
 	            case Query.QueryTypeDescribe:
 	                m = qexec.execDescribe();
+	                end = Calendar.getInstance();
 	                m.removeAll();
 	                m.close();
 	                m=null;
 	                break;
 	            case Query.QueryTypeSelect:
 	                org.apache.jena.query.ResultSet r = qexec.execSelect();
+	                end = Calendar.getInstance();
 	                ResultSetFormatter.consume(r);
 //	                m = r.getResourceModel();
 //	                ResultSetFormatter.out(System.out, r) ;	
@@ -503,13 +510,14 @@ public class ImplConnection implements Connection {
 	            }}
 	            catch (ResultSetException e) {
 	            	if (e.getMessage().equalsIgnoreCase("Expected only object keys [type, value, xml:lang, datatype] but encountered 'subject'"))
-	            		;//log.warning("Ignored ResultsetException because it seems to be an rdr resultset: "+query); // ignore resultset format exception when querying blazegraph and receiving rdr resultset 
+	            		end = Calendar.getInstance();//log.warning("Ignored ResultsetException because it seems to be an rdr resultset: "+query); // ignore resultset format exception when querying blazegraph and receiving rdr resultset 
 	            	else
 	            		throw e;
 					// TODO: handle exception in a better way
 				}
+	            if (null==end)
+	            	end = Calendar.getInstance();
 //				rs = stm.executeQuery(query);
-	            Calendar end = Calendar.getInstance();
 	            qexec.close();
 	            query =null;
 	            qexec =null;
