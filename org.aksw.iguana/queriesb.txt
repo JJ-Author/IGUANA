@@ -1,0 +1,2 @@
+Prefix : <http://example.org/ns#> Select * where{BIND( <<:Bob :isMarriedTo :Alice >> as ?t) .BIND( <<?t   :validUntil  "2015-12-01" >> as ?t2) .?t2  :crawledOn    "2015-12-07" .}
+select * where {?s ?p ?o}

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<iguana xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+	<databases main="dbpedia">
+		
+		<database id="blazegraph" type="impl">
+			<endpoint uri="http://localhost:9999/bigdata/sparql" />
+		</database>
+		<database id="ref" type="impl">
+			<endpoint uri="http://dbpedia.org/sparql" />
+		</database>
+		<database id="virtuoso" type="impl">
+			<endpoint uri="http://localhost:8890/sparql" />
+		</database>
+	</databases>
+
+	<suite>
+		<drop-db value="false" />
+		<query-diversity value="2000" />
+		<save-results-as-diagram value="true" format="PDF"/>
+		<graph-uri name="http://dbpedia.org" />
+		<random-function type="RandomTriple" generate="false">
+			<percent value="1.0" file-name="dbpedia2/" />
+		</random-function>
+		<!-- <warmup time="1" file-name="warmup.txt" />  -->
+		<test-db type="choose" reference="ref">
+			<db id="blazegraph" />
+			<!-- <db id="virtuoso" /> -->
+		</test-db>
+		<testcases> <!--   testcase-pre="./testcasePre.sh %DBID% %PERCENT% %TESTCASEID%" testcase-post="./testcasePost.sh %DBID% %PERCENT% %TESTCASEID%"> -->
+			<testcase class="org.aksw.iguana.testcases.StressTestcase">
+				<property name="sparql-user" value="1" />
+				<property name="update-user" value="0" />
+				<property name="latency-amount0" value="20" />
+				<property name="latency-strategy0" value="VARIABLE" />
+				<property name="queries-path" value="query_blazegraph_ongraphs_allinone.txt" />
+				<property name="is-pattern" value="false" />
+				<property name="timelimit" value="10" />
+				<property name="no-of-query-mixes" value="1"/> 
+			</testcase>
+			<testcase class="org.aksw.iguana.testcases.StressTestcase">
+				<property name="sparql-user" value="2" />
+				<property name="update-user" value="0" />
+				<property name="latency-amount0" value="20" />
+				<property name="latency-strategy0" value="VARIABLE" />
+				<property name="queries-path" value="queriesb.txt" />
+				<property name="is-pattern" value="false" />
+				<property name="timelimit" value="5000" />
+			</testcase>
+		</testcases>
+	</suite>
+
+
+</iguana>
+

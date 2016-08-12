@@ -1,0 +1,13 @@
+[INFO  Thu Aug 11 14:09:52 CEST 2016] LogClusterer is not or not correctly specified
+[INFO  Thu Aug 11 14:09:52 CEST 2016] No User and PWD is set - correct?
+[INFO  Thu Aug 11 14:09:53 CEST 2016] Starting Benchmark at: 14:09:53::81 11.07.2016
+[INFO  Thu Aug 11 14:09:53 CEST 2016] Currently testing: 100.0%
+[INFO  Thu Aug 11 14:09:53 CEST 2016] Current Connection: blazegraph
+[INFO  Thu Aug 11 14:09:53 CEST 2016] No User and PWD is set - correct?
+Loading: org.aksw.iguana.testcases.StressTestcase&0
+[INFO  Thu Aug 11 14:09:53 CEST 2016] No warmup was set.
+[INFO  Thu Aug 11 14:09:53 CEST 2016] No User and PWD is set - correct?
+[INFO  Thu Aug 11 14:09:53 CEST 2016] Starting testcase org.aksw.iguana.testcases.StressTestcase at: 14:09:53::103 11.07.2016
+[INFO  Thu Aug 11 14:09:53 CEST 2016] Starting Workers
+[INFO  Thu Aug 11 14:09:53 CEST 2016] Starting now: 1 Sparql Workers and 0 Update Workers
+[INFO  Thu Aug 11 14:09:53 CEST 2016] All 1 workers have been started
